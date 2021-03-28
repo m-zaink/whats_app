@@ -40,3 +40,5 @@ app.*.symbols
 
 # Obfuscation related
 app.*.map.json
+/android/app/release/app-release.apk
+/android/app/release/output.json

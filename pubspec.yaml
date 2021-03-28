@@ -16,6 +16,7 @@ dependencies:
   flutter_sound: ^7.7.0+1
   logger: ^0.9.4
   path_provider: ^1.6.28
+  uuid: ^2.2.2
 
 dev_dependencies:
   flutter_test:

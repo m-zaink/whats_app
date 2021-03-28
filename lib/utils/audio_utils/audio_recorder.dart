@@ -12,7 +12,7 @@ abstract class AudioRecorder {
 
   Future<void> finishRecording();
 
-  Future<void> cancelRecording(TrackDetails trackDetails);
+  Future<void> cancelRecording();
 }
 
 class _AudioPlayerImpl implements AudioRecorder {
@@ -44,20 +44,24 @@ class _AudioPlayerImpl implements AudioRecorder {
 
   @override
   Future<void> finishRecording() async {
-    if (!_flutterSoundRecorder.isRecording) {
-      return;
-    }
-
-    await _flutterSoundRecorder.stopRecorder();
-    await _flutterSoundRecorder.closeAudioSession();
+    await _stopRecording();
     logger.d('Finished recording successful');
   }
 
   @override
-  Future<void> cancelRecording(TrackDetails trackDetails) async {
-    await finishRecording();
+  Future<void> cancelRecording() async {
+    final trackUrl = await _stopRecording();
+    _removeRecordedFile(trackUrl);
+  }
 
-    _removeRecordedFile(trackDetails.url);
+  Future<String> _stopRecording() async {
+    if (!_flutterSoundRecorder.isRecording) {
+      return '';
+    }
+
+    final trackUrl = await _flutterSoundRecorder.stopRecorder();
+    await _flutterSoundRecorder.closeAudioSession();
+    return trackUrl;
   }
 
   void _removeRecordedFile(String filePath) async {

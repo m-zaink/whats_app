@@ -10,7 +10,7 @@ class RecordWidget extends StatefulWidget {
 }
 
 class _RecordWidgetState extends State<RecordWidget> {
-  double width = 400;
+  double width;
   bool isTrashIconVisible = false;
 
   @override
@@ -25,35 +25,40 @@ class _RecordWidgetState extends State<RecordWidget> {
           builder: (context, controller, child) => Row(
             children: [
               Flexible(
-                child: Container(
-                  width: width,
-                  padding: EdgeInsets.all(8.0),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      controller.currentState.isRecording
-                          ? Expanded(child: _CancelSliderWidgetForRecordingButton())
-                          : Expanded(
-                              child: _MessageInputWidget(
-                                isTrashIconVisible: isTrashIconVisible,
-                              ),
-                            ),
-                      SizedBox(width: 5.0),
-                      AudioRecordingButton(
-                        onLongPressMoveUpdate: (offset) {
-                          updateUIOrStopRecordingBasedOn(offset, controller: controller);
-                        },
-                        onLongPressUp: () {
-                          resetWidth();
-                        },
-                      ),
-                    ],
-                  ),
+                child: _buildChatWidget(
+                  context,
+                  controller: controller,
                 ),
               ),
             ],
           ),
+        ),
+      );
+
+  Widget _buildChatWidget(BuildContext context, {@required AudioRecordingController controller}) => Container(
+        width: width ?? MediaQuery.of(context).size.width,
+        padding: EdgeInsets.all(8.0),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.end,
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            controller.currentState.isRecording
+                ? Expanded(child: _CancelSliderWidgetForRecordingButton())
+                : Expanded(
+                    child: _MessageInputWidget(
+                      isTrashIconVisible: isTrashIconVisible,
+                    ),
+                  ),
+            SizedBox(width: 5.0),
+            AudioRecordingButton(
+              onLongPressMoveUpdate: (offset) {
+                updateUIOrStopRecordingBasedOn(offset, controller: controller);
+              },
+              onLongPressUp: () {
+                resetWidth();
+              },
+            ),
+          ],
         ),
       );
 
@@ -79,7 +84,7 @@ class _RecordWidgetState extends State<RecordWidget> {
   }
 
   void resetWidth() {
-    updateWidthTo(double.infinity);
+    updateWidthTo(MediaQuery.of(context).size.width);
   }
 
   void showAndHideTrashIcon() async {

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:whats_app/controllers/chat_view_controllers/audio_recording_controller.dart';
 import 'package:whats_app/controllers/chat_view_controllers/chat_controller.dart';
+import 'package:whats_app/utils/extensions/extensions.dart';
 
 class RecordWidget extends StatefulWidget {
   @override
@@ -31,10 +32,13 @@ class _RecordWidgetState extends State<RecordWidget> {
                     crossAxisAlignment: CrossAxisAlignment.end,
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
-                      if (isTrashIconVisible) _buildAnimatedDeleteButton(),
                       controller.currentState.isRecording
                           ? Expanded(child: _CancelSliderWidgetForRecordingButton())
-                          : Expanded(child: _MessageInputWidget()),
+                          : Expanded(
+                              child: _MessageInputWidget(
+                                isTrashIconVisible: isTrashIconVisible,
+                              ),
+                            ),
                       SizedBox(width: 5.0),
                       AudioRecordingButton(
                         onLongPressMoveUpdate: (offset) {
@@ -49,19 +53,6 @@ class _RecordWidgetState extends State<RecordWidget> {
                 ),
               ),
             ],
-          ),
-        ),
-      );
-
-  Widget _buildAnimatedDeleteButton() => AnimatedContainer(
-        height: isTrashIconVisible ? 40.0 : 0.0,
-        width: isTrashIconVisible ? 40.0 : 0.0,
-        duration: Duration(milliseconds: 800),
-        curve: Curves.easeIn,
-        child: Center(
-          child: Icon(
-            Icons.delete,
-            color: Colors.red,
           ),
         ),
       );
@@ -96,7 +87,7 @@ class _RecordWidgetState extends State<RecordWidget> {
       isTrashIconVisible = true;
     });
 
-    await Future.delayed(Duration(milliseconds: 800));
+    await Future.delayed(Duration(seconds: 1, milliseconds: 500));
 
     setState(() {
       isTrashIconVisible = false;
@@ -141,6 +132,10 @@ class _CancelSliderWidgetForRecordingButton extends StatelessWidget {
 }
 
 class _MessageInputWidget extends StatelessWidget {
+  final bool isTrashIconVisible;
+
+  const _MessageInputWidget({Key key, @required this.isTrashIconVisible}) : super(key: key);
+
   @override
   Widget build(BuildContext context) => Consumer<AudioRecordingController>(
         builder: (context, controller, child) => Container(
@@ -155,6 +150,23 @@ class _MessageInputWidget extends StatelessWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
+              Row(
+                children: [
+                  isTrashIconVisible
+                      ? Icon(
+                          Icons.delete,
+                          color: Colors.red,
+                        )
+                      : Icon(
+                          Icons.emoji_emotions,
+                        ),
+                  VerticalDivider(
+                    color: Colors.grey,
+                    indent: 10.0,
+                    endIndent: 10.0,
+                  ),
+                ],
+              ),
               Flexible(
                 child: TextField(
                   decoration: InputDecoration(
@@ -170,7 +182,7 @@ class _MessageInputWidget extends StatelessWidget {
                     indent: 10.0,
                     endIndent: 10.0,
                   ),
-                  Icon(Icons.chevron_right),
+                  Icon(Icons.chevron_left),
                 ],
               ),
             ],
@@ -230,27 +242,6 @@ class AudioRecordingButton extends StatelessWidget {
       return AudioRecordingButton.enabledRadius;
     } else {
       return AudioRecordingButton.disabledRadius;
-    }
-  }
-}
-
-extension on int {
-  String get toSecondsAndMinutes {
-    final numberOfMinutes = this ~/ 60;
-    final numberOfSeconds = this % 60;
-
-    if (numberOfMinutes < 10) {
-      if (numberOfSeconds < 10) {
-        return '0$numberOfMinutes:0$numberOfSeconds'; //
-      } else {
-        return '0$numberOfMinutes:$numberOfSeconds'; //
-      }
-    } else {
-      if (numberOfSeconds < 10) {
-        return '$numberOfMinutes:0$numberOfSeconds'; //
-      } else {
-        return '$numberOfMinutes:$numberOfSeconds'; //
-      }
     }
   }
 }

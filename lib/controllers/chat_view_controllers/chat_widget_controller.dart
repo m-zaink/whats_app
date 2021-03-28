@@ -41,7 +41,18 @@ class _ChatWidgetControllerImpl extends ChangeNotifier
 
   @override
   void removeMessage(Message message) {
-    // TODO: implement removeMessage
+    assert(message != null, 'Message cannot be null');
+
+    updateState(
+      currentState.copyWith(
+        messages: [
+          ...currentState.messages
+            ..removeWhere(
+              (oldMessage) => message.id == oldMessage.id,
+            )
+        ],
+      ),
+    );
   }
 
   void updateState(ChatState updatedState) {

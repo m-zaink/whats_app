@@ -32,7 +32,7 @@ class _RecordWidgetState extends State<RecordWidget> {
                     children: [
                       controller.currentState.isRecording
                           ? Expanded(child: _CancelSliderWidgetForRecordingButton())
-                          : Expanded(child: _TipsWidgetForRecordingButton()),
+                          : Expanded(child: _MessageInputWidget()),
                       SizedBox(width: 5.0),
                       AudioRecordingButton(
                         onLongPressMoveUpdate: (offset) {
@@ -112,7 +112,7 @@ class _CancelSliderWidgetForRecordingButton extends StatelessWidget {
       );
 }
 
-class _TipsWidgetForRecordingButton extends StatelessWidget {
+class _MessageInputWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Consumer<AudioRecordingController>(
         builder: (context, controller, child) => Container(

@@ -10,6 +10,7 @@ class RecordWidget extends StatefulWidget {
 
 class _RecordWidgetState extends State<RecordWidget> {
   double width = 400;
+  bool isTrashIconVisible = false;
 
   @override
   Widget build(BuildContext context) => ChangeNotifierProvider<AudioRecordingController>(
@@ -30,6 +31,7 @@ class _RecordWidgetState extends State<RecordWidget> {
                     crossAxisAlignment: CrossAxisAlignment.end,
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
+                      if (isTrashIconVisible) _buildAnimatedDeleteButton(),
                       controller.currentState.isRecording
                           ? Expanded(child: _CancelSliderWidgetForRecordingButton())
                           : Expanded(child: _MessageInputWidget()),
@@ -39,7 +41,7 @@ class _RecordWidgetState extends State<RecordWidget> {
                           updateUIOrStopRecordingBasedOn(offset, controller: controller);
                         },
                         onLongPressUp: () {
-                          resetUIToOriginalState();
+                          resetWidth();
                         },
                       ),
                     ],
@@ -47,6 +49,19 @@ class _RecordWidgetState extends State<RecordWidget> {
                 ),
               ),
             ],
+          ),
+        ),
+      );
+
+  Widget _buildAnimatedDeleteButton() => AnimatedContainer(
+        height: isTrashIconVisible ? 40.0 : 0.0,
+        width: isTrashIconVisible ? 40.0 : 0.0,
+        duration: Duration(milliseconds: 800),
+        curve: Curves.easeIn,
+        child: Center(
+          child: Icon(
+            Icons.delete,
+            color: Colors.red,
           ),
         ),
       );
@@ -59,19 +74,32 @@ class _RecordWidgetState extends State<RecordWidget> {
 
     if (distanceDraggedFromRight > 120.0) {
       controller.cancelRecording();
-      setState(() {
-        width = double.infinity;
-      });
+      resetWidth();
+      showAndHideTrashIcon();
     } else {
-      setState(() {
-        width = MediaQuery.of(context).size.width - distanceDraggedFromRight;
-      });
+      updateWidthTo(MediaQuery.of(context).size.width - distanceDraggedFromRight);
     }
   }
 
-  void resetUIToOriginalState() {
+  void updateWidthTo(double width) {
     setState(() {
-      width = double.infinity;
+      this.width = width;
+    });
+  }
+
+  void resetWidth() {
+    updateWidthTo(double.infinity);
+  }
+
+  void showAndHideTrashIcon() async {
+    setState(() {
+      isTrashIconVisible = true;
+    });
+
+    await Future.delayed(Duration(milliseconds: 800));
+
+    setState(() {
+      isTrashIconVisible = false;
     });
   }
 }

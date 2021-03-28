@@ -6,23 +6,19 @@ import 'package:whats_app/views/chat_view/widgets/audio_message_widget.dart';
 class ChatWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Consumer<ChatController>(
-        builder: (context, controller, message) => ListView.builder(
-          itemBuilder: (context, index) {
-            if (controller.currentState.messages.isEmpty) {
-              return _buildNoMessagesWidget(
+        builder: (context, controller, message) => controller.currentState.messages.isEmpty
+            ? _buildNoMessagesWidget(
                 context,
                 controller: controller,
-              );
-            } else {
-              return _buildChatWidget(
-                context,
-                index: index,
-                controller: controller,
-              );
-            }
-          },
-          itemCount: controller.currentState.messages.length,
-        ),
+              )
+            : ListView.builder(
+                itemBuilder: (context, index) => _buildChatWidget(
+                  context,
+                  index: index,
+                  controller: controller,
+                ),
+                itemCount: controller.currentState.messages.length,
+              ),
       );
 
   Widget _buildNoMessagesWidget(BuildContext context, {@required ChatController controller}) => Center(

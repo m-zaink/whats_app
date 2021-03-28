@@ -17,16 +17,14 @@ class AudioPlaybackState {
 abstract class AudioPlaybackController extends ChangeNotifier {
   AudioPlaybackState get currentState;
 
-  factory AudioPlaybackController(TrackDetails trackDetails) =>
-      _AudioPlaybackControllerImpl(trackDetails);
+  factory AudioPlaybackController({@required TrackDetails trackDetails}) => _AudioPlaybackControllerImpl(trackDetails);
 
   void startPlaying();
 
   void stopPlaying();
 }
 
-class _AudioPlaybackControllerImpl extends ChangeNotifier
-    implements AudioPlaybackController {
+class _AudioPlaybackControllerImpl extends ChangeNotifier implements AudioPlaybackController {
   final AudioPlayer _audioPlayer;
   final TrackDetails _trackDetails;
 
@@ -39,7 +37,14 @@ class _AudioPlaybackControllerImpl extends ChangeNotifier
 
   @override
   void startPlaying() async {
-    final isPlaying = await _audioPlayer.startPlayback(_trackDetails);
+    final isPlaying = await _audioPlayer.startPlayback(
+      _trackDetails,
+      onPlaybackFinished: () {
+        if (currentState.isPlaying) {
+          updateState(currentState.copyWith(isPlaying: false));
+        }
+      },
+    );
 
     updateState(currentState.copyWith(isPlaying: isPlaying));
   }

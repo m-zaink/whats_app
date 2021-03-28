@@ -21,7 +21,7 @@ class _AudioPlayerImpl implements AudioPlayer {
   Future<bool> startPlayback(TrackDetails trackDetails,
       {VoidCallback onPlaybackFinished}) async {
     if (_flutterSoundPlayer.isPlaying) {
-      return false;
+      await stopPlayback();
     }
 
     try {

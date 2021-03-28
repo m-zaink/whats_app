@@ -51,6 +51,7 @@ class _AudioPlayerImpl implements AudioRecorder {
   @override
   Future<void> cancelRecording() async {
     final trackUrl = await _stopRecording();
+    logger.d('TrackURL : $trackUrl');
     _removeRecordedFile(trackUrl);
   }
 
@@ -61,6 +62,7 @@ class _AudioPlayerImpl implements AudioRecorder {
 
     final trackUrl = await _flutterSoundRecorder.stopRecorder();
     await _flutterSoundRecorder.closeAudioSession();
+
     return trackUrl;
   }
 

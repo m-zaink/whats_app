@@ -13,22 +13,21 @@ class ChatState {
   }
 }
 
-abstract class ChatWidgetController extends ChangeNotifier {
+abstract class ChatController extends ChangeNotifier {
   ChatState get currentState;
 
-  factory ChatWidgetController() => _ChatWidgetControllerImpl();
+  factory ChatController() => _ChatControllerImpl();
 
   void addMessage(Message message);
 
   void removeMessage(Message message);
 }
 
-class _ChatWidgetControllerImpl extends ChangeNotifier
-    implements ChatWidgetController {
+class _ChatControllerImpl extends ChangeNotifier implements ChatController {
   @override
   ChatState currentState;
 
-  _ChatWidgetControllerImpl() : this.currentState = ChatState();
+  _ChatControllerImpl() : this.currentState = ChatState();
 
   @override
   void addMessage(Message message) {

@@ -76,8 +76,7 @@ class _AudioPlayerImpl implements AudioRecorder {
 
 Future<String> _createFilePathBasedOnCurrentTime() async {
   final applicationsDirectory = await getApplicationDocumentsDirectory();
-  final audioFilePath = applicationsDirectory.path +
-      '/${DateTime.now().millisecondsSinceEpoch}.mp3';
+  final audioFilePath = applicationsDirectory.path + '/${DateTime.now().millisecondsSinceEpoch}.mp3';
 
   return audioFilePath;
 }

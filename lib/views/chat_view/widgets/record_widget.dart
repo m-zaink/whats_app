@@ -1,3 +1,4 @@
+import 'package:flutter/animation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:whats_app/controllers/chat_view_controllers/audio_recording_controller.dart';
@@ -11,7 +12,6 @@ class RecordWidget extends StatefulWidget {
 
 class _RecordWidgetState extends State<RecordWidget> {
   double width;
-  bool isTrashIconVisible = false;
 
   @override
   Widget build(BuildContext context) => ChangeNotifierProvider<AudioRecordingController>(
@@ -44,11 +44,7 @@ class _RecordWidgetState extends State<RecordWidget> {
           children: [
             controller.currentState.isRecording
                 ? Expanded(child: _CancelSliderWidgetForRecordingButton())
-                : Expanded(
-                    child: _MessageInputWidget(
-                      isTrashIconVisible: isTrashIconVisible,
-                    ),
-                  ),
+                : Expanded(child: _MessageInputWidget()),
             SizedBox(width: 5.0),
             AudioRecordingButton(
               onLongPressMoveUpdate: (offset) {
@@ -71,31 +67,18 @@ class _RecordWidgetState extends State<RecordWidget> {
     if (distanceDraggedFromRight > thresholdDistance) {
       controller.cancelRecording();
       resetWidth();
-      showAndHideTrashIcon();
     } else {
       updateWidthTo(MediaQuery.of(context).size.width - distanceDraggedFromRight);
     }
-  }
-
-  void updateWidthTo(double width) {
-    setState(() {
-      this.width = width;
-    });
   }
 
   void resetWidth() {
     updateWidthTo(MediaQuery.of(context).size.width);
   }
 
-  void showAndHideTrashIcon() async {
+  void updateWidthTo(double width) {
     setState(() {
-      isTrashIconVisible = true;
-    });
-
-    await Future.delayed(Duration(seconds: 1, milliseconds: 500));
-
-    setState(() {
-      isTrashIconVisible = false;
+      this.width = width;
     });
   }
 }
@@ -137,10 +120,6 @@ class _CancelSliderWidgetForRecordingButton extends StatelessWidget {
 }
 
 class _MessageInputWidget extends StatelessWidget {
-  final bool isTrashIconVisible;
-
-  const _MessageInputWidget({Key key, @required this.isTrashIconVisible}) : super(key: key);
-
   @override
   Widget build(BuildContext context) => Consumer<AudioRecordingController>(
         builder: (context, controller, child) => Container(
@@ -157,14 +136,7 @@ class _MessageInputWidget extends StatelessWidget {
             children: [
               Row(
                 children: [
-                  isTrashIconVisible
-                      ? Icon(
-                          Icons.delete,
-                          color: Colors.red,
-                        )
-                      : Icon(
-                          Icons.emoji_emotions,
-                        ),
+                  controller.currentState.isCancelling ? _buildTrashIcon() : _buildEmojiIcon(),
                   VerticalDivider(
                     color: Colors.grey,
                     indent: 10.0,
@@ -194,6 +166,10 @@ class _MessageInputWidget extends StatelessWidget {
           ),
         ),
       );
+
+  Widget _buildEmojiIcon() => Icon(Icons.emoji_emotions);
+
+  Widget _buildTrashIcon() => Icon(Icons.delete, color: Colors.red);
 }
 
 class AudioRecordingButton extends StatelessWidget {

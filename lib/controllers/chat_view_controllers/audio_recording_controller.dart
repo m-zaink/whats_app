@@ -9,18 +9,21 @@ import 'package:whats_app/utils/permission_utils/permission_utils.dart';
 
 class RecordState {
   final bool isRecording;
+  final bool isCancelling;
   final int secondsElapsedSinceRecordingStarted;
 
-  RecordState({this.isRecording = false, this.secondsElapsedSinceRecordingStarted = 0})
+  RecordState({this.isRecording = false, this.isCancelling = false, this.secondsElapsedSinceRecordingStarted = 0})
       : assert(isRecording != null, 'isRecording cannot be null'),
         assert(secondsElapsedSinceRecordingStarted != null, 'secondsElapsedSinceRecordingStarted cannot be null');
 
   RecordState copyWith({
     bool isRecording,
+    bool isCancelling,
     int secondsElapsedSinceRecordingStarted,
   }) {
     return RecordState(
       isRecording: isRecording ?? this.isRecording,
+      isCancelling: isCancelling ?? this.isCancelling,
       secondsElapsedSinceRecordingStarted:
           secondsElapsedSinceRecordingStarted ?? this.secondsElapsedSinceRecordingStarted,
     );
@@ -58,9 +61,9 @@ class _AudioRecordingControllerImpl extends ChangeNotifier implements AudioRecor
 
   @override
   void startRecording() async {
-    final isMicrophonePermissionGranted = await requestMicrophonePermission();
-
-    if (isMicrophonePermissionGranted) {
+    if (await isMicrophonePermissionUndeterminedOrDenied()) {
+      await requestMicrophonePermission();
+    } else if (await isMicrophonePermissionGranted()) {
       _temporaryTrackDetails = await _audioRecorder.startRecording();
 
       final isRecording = _temporaryTrackDetails != null;
@@ -69,6 +72,8 @@ class _AudioRecordingControllerImpl extends ChangeNotifier implements AudioRecor
         _updateState(currentState.copyWith(isRecording: true));
         _createTimerToTrackRecordingDuration();
       }
+    } else {
+      // Do nothing for now. Silently discard
     }
   }
 
@@ -90,6 +95,8 @@ class _AudioRecordingControllerImpl extends ChangeNotifier implements AudioRecor
   @override
   void cancelRecording() async {
     if (_temporaryTrackDetails != null) {
+      _updateState(currentState.copyWith(isCancelling: true));
+
       await _audioRecorder.cancelRecording();
 
       _updateState(
@@ -100,6 +107,10 @@ class _AudioRecordingControllerImpl extends ChangeNotifier implements AudioRecor
       );
 
       _clearTemporaryTrackDetails();
+
+      // For animation purposes
+      await Future.delayed(Duration(seconds: 2));
+      _updateState(currentState.copyWith(isCancelling: false));
     }
   }
 

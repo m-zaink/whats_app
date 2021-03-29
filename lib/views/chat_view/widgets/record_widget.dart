@@ -198,7 +198,7 @@ class _MessageInputWidget extends StatelessWidget {
 
 class AudioRecordingButton extends StatelessWidget {
   static const double disabledRadius = 20.0;
-  static const double enabledRadius = 25.0;
+  static const double enabledRadius = 22.0;
 
   final void Function(Offset offset) onLongPressMoveUpdate;
   final VoidCallback onLongPressUp;

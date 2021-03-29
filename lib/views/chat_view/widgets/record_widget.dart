@@ -46,7 +46,7 @@ class _RecordWidgetState extends State<RecordWidget> {
                 ? Expanded(child: _CancelSliderWidgetForRecordingButton())
                 : Expanded(child: _MessageInputWidget()),
             SizedBox(width: 5.0),
-            AudioRecordingButton(
+            _AudioRecordingButton(
               onLongPressMoveUpdate: (offset) {
                 updateUIOrStopRecordingBasedOn(offset, controller: controller);
               },
@@ -172,14 +172,14 @@ class _MessageInputWidget extends StatelessWidget {
   Widget _buildTrashIcon() => Icon(Icons.delete, color: Colors.red);
 }
 
-class AudioRecordingButton extends StatelessWidget {
+class _AudioRecordingButton extends StatelessWidget {
   static const double disabledRadius = 20.0;
   static const double enabledRadius = 22.0;
 
   final void Function(Offset offset) onLongPressMoveUpdate;
   final VoidCallback onLongPressUp;
 
-  const AudioRecordingButton({
+  const _AudioRecordingButton({
     Key key,
     this.onLongPressMoveUpdate,
     this.onLongPressUp,
@@ -220,9 +220,9 @@ class AudioRecordingButton extends StatelessWidget {
 
   double radiusBasedOnCurrentState(AudioRecordingController controller) {
     if (controller.currentState.isRecording) {
-      return AudioRecordingButton.enabledRadius;
+      return _AudioRecordingButton.enabledRadius;
     } else {
-      return AudioRecordingButton.disabledRadius;
+      return _AudioRecordingButton.disabledRadius;
     }
   }
 }

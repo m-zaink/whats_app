@@ -13,11 +13,10 @@ class AudioMessageWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => ChangeNotifierProvider<AudioPlaybackController>(
-        create: (context) => AudioPlaybackController(
-          trackDetails: recordedAudioMessage.trackDetails,
-        ),
+        create: (context) => AudioPlaybackController(trackDetails: recordedAudioMessage.trackDetails),
         child: Consumer<AudioPlaybackController>(
           builder: (context, controller, child) => ListTile(
+            contentPadding: EdgeInsets.all(20.0),
             title: Text(recordedAudioMessage.id),
             trailing: IconButton(
               icon: Icon(

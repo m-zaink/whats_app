@@ -67,8 +67,8 @@ class _RecordWidgetState extends State<RecordWidget> {
     AudioRecordingController controller,
   }) {
     final distanceDraggedFromRight = -dragOffset.dx;
-
-    if (distanceDraggedFromRight > 120.0) {
+    final thresholdDistance = MediaQuery.of(context).size.width / 2.5;
+    if (distanceDraggedFromRight > thresholdDistance) {
       controller.cancelRecording();
       resetWidth();
       showAndHideTrashIcon();
